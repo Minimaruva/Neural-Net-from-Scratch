@@ -39,3 +39,23 @@ print("Missing values in test data:\n", test_data.isnull().sum())
 train_data = train_data.fillna(train_data.mean())
 test_data = test_data.fillna(test_data.mean())
 
+# Normalise the data
+## ToDo tell user about normalisation and let them choose the method
+### https://developers.google.com/machine-learning/crash-course/numerical-data/normalization
+
+# Normalize the data using z-score normalization
+train_mean = train_data.mean()
+train_std = train_data.std()
+train_data = (train_data - train_mean) / train_std
+
+test_mean = test_data.mean()
+test_std = test_data.std()
+test_data = (test_data - test_mean) / test_std
+
+number_of_features = train_data.shape[1] - 1  # Exclude the target variable
+print(f"Number of features: {number_of_features}")
+
+number_of_outputs = 1  # User should specify this based on the target variable
+print(f"Number of outputs: {number_of_outputs}")
+
+# Convert DataFrame to numpy arrays
