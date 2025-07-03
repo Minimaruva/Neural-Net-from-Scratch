@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-
+labels=['Survived']
 train_data_path = './Titanic_data/train.csv'
 test_data_path = './Titanic_data/test.csv'
 
@@ -43,14 +43,7 @@ test_data = test_data.fillna(test_data.mean())
 ## ToDo tell user about normalisation and let them choose the method
 ### https://developers.google.com/machine-learning/crash-course/numerical-data/normalization
 
-# Normalize the data using z-score normalization
-train_mean = train_data.mean()
-train_std = train_data.std()
-train_data = (train_data - train_mean) / train_std
 
-test_mean = test_data.mean()
-test_std = test_data.std()
-test_data = (test_data - test_mean) / test_std
 
 number_of_features = train_data.shape[1] - 1  # Exclude the target variable
 print(f"Number of features: {number_of_features}")
@@ -58,4 +51,42 @@ print(f"Number of features: {number_of_features}")
 number_of_outputs = 1  # User should specify this based on the target variable
 print(f"Number of outputs: {number_of_outputs}")
 
+print(test_data.head())
+
 # Convert DataFrame to numpy arrays
+x_train = train_data.drop(columns=labels)
+y_train = train_data[labels]
+
+x_test = test_data.drop(columns=labels)
+y_test = test_data[labels]
+
+# Normalize the data using z-score normalization
+x_train_mean = x_train.mean()
+x_train_std = x_train.std()
+x_train = (x_train - x_train_mean) / x_train_std
+
+x_test_mean = x_test.mean()
+x_test_std = x_test.std()
+x_test = (x_test - x_test_mean) / x_test_std
+
+print(x_train.head())
+# Convert the DataFrame to numpy arrays
+x_train = x_train.to_numpy()
+y_train = y_train.to_numpy()
+x_test = x_test.to_numpy()
+y_test = y_test.to_numpy()
+
+
+# Reshape the data to ensure it has the correct dimensions
+train_samples = train_data.shape[0]  # number of samples
+test_samples = test_data.shape[0]  # number of samples
+
+# Transpose the input matrix to match the expected shape
+x_train = x_train.T
+x_test = x_test.T
+
+# Reshape outputs to a matrix
+y_train = y_train.reshape(len(labels), train_samples)
+y_test = y_test.reshape(len(labels), test_samples)
+
+print(x_train)
