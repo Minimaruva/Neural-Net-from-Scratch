@@ -6,15 +6,36 @@ labels=['Survived']
 train_data_path = './Titanic_data/train.csv'
 test_data_path = './Titanic_data/test.csv'
 
-with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
-    train_data = pd.read_csv(train_file)
-    test_data = pd.read_csv(test_file)
+
+def load_data(train_data_path, test_data_path, labels):
+    """
+    Prepares the data for training and testing by loading, cleaning, and normalizing it.
+    
+    Parameters:
+    - train_data_path: Path to the training data CSV file.
+    - test_data_path: Path to the testing data CSV file.
+    - labels: List of labels/target variables.
+    
+    Returns:
+    - x_train: Normalized training features.
+    - y_train: Training labels.
+    - x_test: Normalized testing features.
+    - y_test: Testing labels.
+    """
+
+    with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
+        train_data = pd.read_csv(train_file)
+        test_data = pd.read_csv(test_file)
 
 
-print(train_data.head())
-# Display column names
-col_names = train_data.columns.values
-print(col_names)
+    print(train_data.head())
+    # Display column names
+    col_names = train_data.columns.values
+    print(col_names)
+    return train_data, test_data, col_names
+
+
+train_data, test_data, col_names = load_data(train_data_path, test_data_path, labels)
 
 # Immediately drop non-numeric columns
 ## TODO: show user non-numeric columns and ask if they want to drop them or encode them
