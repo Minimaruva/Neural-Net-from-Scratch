@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
-
+from sklearn.preprocessing import LabelEncoder
 
 labels=['Survived']
 train_data_path = './Titanic_data/train.csv'
 test_data_path = './Titanic_data/test.csv'
 
 
-def load_data(train_data_path, test_data_path, labels):
+def load_data(train_data_path, test_data_path):
     """
     Prepares the data for training and testing by loading, cleaning, and normalizing it.
     
@@ -17,10 +17,9 @@ def load_data(train_data_path, test_data_path, labels):
     - labels: List of labels/target variables.
     
     Returns:
-    - x_train: Normalized training features.
-    - y_train: Training labels.
-    - x_test: Normalized testing features.
-    - y_test: Testing labels.
+    - x_data
+    - y_data
+    - col_names: Column names of the training data.
     """
 
     with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
@@ -35,7 +34,29 @@ def load_data(train_data_path, test_data_path, labels):
     return train_data, test_data, col_names
 
 
-train_data, test_data, col_names = load_data(train_data_path, test_data_path, labels)
+
+def encode_non_numeric(df, columns):
+    for col in columns:
+        le = LabelEncoder()
+        df[col] = le.fit_transform(df[col].astype(str))
+    return df
+
+train_data, test_data, col_names = load_data(train_data_path, test_data_path)
+
+print("Choose columns to drop from the training data:")
+# Display the columns in the training data
+print(train_data.columns)
+
+non_numeric_columns = train_data.select_dtypes(exclude=[np.number]).columns.tolist()
+print("Non-numeric columns in training data:", non_numeric_columns)
+
+train_data = encode_non_numeric(train_data, non_numeric_columns)
+test_data = encode_non_numeric(test_data, non_numeric_columns)
+
+print("After encoding non-numeric columns:")
+print(train_data.head())
+print("*"*100)
+
 
 # Immediately drop non-numeric columns
 ## TODO: show user non-numeric columns and ask if they want to drop them or encode them
