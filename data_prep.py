@@ -7,21 +7,7 @@ train_data_path = './Titanic_data/train.csv'
 test_data_path = './Titanic_data/test.csv'
 
 
-def load_data(train_data_path, test_data_path):
-    """
-    Prepares the data for training and testing by loading, cleaning, and normalizing it.
-    
-    Parameters:
-    - train_data_path: Path to the training data CSV file.
-    - test_data_path: Path to the testing data CSV file.
-    - labels: List of labels/target variables.
-    
-    Returns:
-    - x_data
-    - y_data
-    - col_names: Column names of the training data.
-    """
-
+def load_data_train_test(train_data_path, test_data_path):
     with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
         train_data = pd.read_csv(train_file)
         test_data = pd.read_csv(test_file)
@@ -44,7 +30,31 @@ def encode_non_numeric(df):
 def fill_missing_values(df):
     return df.fillna(df.median())
 
-train_data, test_data, col_names = load_data(train_data_path, test_data_path)
+def normalize_data_z_score(df, labels=None):
+    if labels is not None:
+        features = df.drop(columns=labels)
+        labels_df = df[labels] 
+
+        features_norm = (features - features.mean()) / features.std()
+        df = pd.concat([features_norm, labels_df], axis=1)
+    else:
+        df = (df - df.mean()) / df.std()
+    
+    return df
+
+
+def split_reshape_data(df, labels):
+    samples = df.shape[0]  # number of samples
+
+    x_data = df.drop(columns=labels).to_numpy()
+    y_data = df[labels].to_numpy()
+
+    x_data = x_data.T 
+    y_data = y_data.reshape(len(labels), samples)
+
+    return x_data, y_data
+
+train_data, test_data, col_names = load_data_train_test(train_data_path, test_data_path)
 
 print("Choose columns to drop from the training data:")
 # Display the columns in the training data
@@ -78,6 +88,7 @@ print("Missing values in test data:\n", test_data.isnull().sum())
 train_data = fill_missing_values(train_data)
 test_data = fill_missing_values(test_data)
 
+
 # Normalise the data
 ## ToDo tell user about normalisation and let them choose the method
 ### https://developers.google.com/machine-learning/crash-course/numerical-data/normalization
@@ -92,40 +103,37 @@ print(f"Number of outputs: {number_of_outputs}")
 
 print(test_data.head())
 
-# Convert DataFrame to numpy arrays
-x_train = train_data.drop(columns=labels)
-y_train = train_data[labels]
+train_data = normalize_data_z_score(train_data, labels)
+test_data = normalize_data_z_score(test_data, labels)
 
-x_test = test_data.drop(columns=labels)
-y_test = test_data[labels]
+x_train, y_train = split_reshape_data(train_data, labels)
+x_test, y_test = split_reshape_data(test_data, labels)
 
-# Normalize the data using z-score normalization
-x_train_mean = x_train.mean()
-x_train_std = x_train.std()
-x_train = (x_train - x_train_mean) / x_train_std
+# # Convert DataFrame to numpy arrays
+# x_train = train_data.drop(columns=labels)
+# y_train = train_data[labels]
 
-x_test_mean = x_test.mean()
-x_test_std = x_test.std()
-x_test = (x_test - x_test_mean) / x_test_std
-
-print(x_train.head())
-# Convert the DataFrame to numpy arrays
-x_train = x_train.to_numpy()
-y_train = y_train.to_numpy()
-x_test = x_test.to_numpy()
-y_test = y_test.to_numpy()
+# x_test = test_data.drop(columns=labels)
+# y_test = test_data[labels]
 
 
-# Reshape the data to ensure it has the correct dimensions
-train_samples = train_data.shape[0]  # number of samples
-test_samples = test_data.shape[0]  # number of samples
+# # Convert the DataFrame to numpy arrays
+# x_train = x_train.to_numpy()
+# y_train = y_train.to_numpy()
+# x_test = x_test.to_numpy()
+# y_test = y_test.to_numpy()
 
-# Transpose the input matrix to match the expected shape
-x_train = x_train.T
-x_test = x_test.T
 
-# Reshape outputs to a matrix
-y_train = y_train.reshape(len(labels), train_samples)
-y_test = y_test.reshape(len(labels), test_samples)
+# # Reshape the data to ensure it has the correct dimensions
+# train_samples = train_data.shape[0]  # number of samples
+# test_samples = test_data.shape[0]  # number of samples
+
+# # Transpose the input matrix to match the expected shape
+# x_train = x_train.T
+# x_test = x_test.T
+
+# # Reshape outputs to a matrix
+# y_train = y_train.reshape(len(labels), train_samples)
+# y_test = y_test.reshape(len(labels), test_samples)
 
 print(x_train)
