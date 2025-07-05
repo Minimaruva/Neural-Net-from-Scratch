@@ -13,10 +13,7 @@ def load_data_train_test(train_data_path, test_data_path):
         test_data = pd.read_csv(test_file)
 
 
-    print(train_data.head())
-    # Display column names
     col_names = train_data.columns.values
-    print(col_names)
     return train_data, test_data, col_names
 
 
