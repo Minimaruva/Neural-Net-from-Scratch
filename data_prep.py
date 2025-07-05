@@ -35,11 +35,14 @@ def load_data(train_data_path, test_data_path):
 
 
 
-def encode_non_numeric(df, columns):
-    for col in columns:
-        le = LabelEncoder()
-        df[col] = le.fit_transform(df[col].astype(str))
+def encode_non_numeric(df):
+    non_numeric_columns = df.select_dtypes(exclude=[np.number]).columns.tolist()
+    for col in non_numeric_columns:
+        df[col] = LabelEncoder().fit_transform(df[col].astype(str))
     return df
+
+def fill_missing_values(df):
+    return df.fillna(df.median())
 
 train_data, test_data, col_names = load_data(train_data_path, test_data_path)
 
@@ -47,11 +50,11 @@ print("Choose columns to drop from the training data:")
 # Display the columns in the training data
 print(train_data.columns)
 
-non_numeric_columns = train_data.select_dtypes(exclude=[np.number]).columns.tolist()
-print("Non-numeric columns in training data:", non_numeric_columns)
 
-train_data = encode_non_numeric(train_data, non_numeric_columns)
-test_data = encode_non_numeric(test_data, non_numeric_columns)
+print("Non-numeric columns in training data:", train_data.select_dtypes(exclude=[np.number]).columns.tolist())
+
+train_data = encode_non_numeric(train_data)
+test_data = encode_non_numeric(test_data)
 
 print("After encoding non-numeric columns:")
 print(train_data.head())
@@ -60,13 +63,7 @@ print("*"*100)
 
 # Immediately drop non-numeric columns
 ## TODO: show user non-numeric columns and ask if they want to drop them or encode them
-'''
-Potential solution for encoding non-numeric columns:
-from sklearn.preprocessing import LabelEncoder
-enc = LabelEncoder()
-enc.fit(df['COL1'])
-df['COL1'] = enc.transform(df['col1'])
-'''
+
 
 train_data = train_data.select_dtypes(include=[np.number])
 test_data = test_data.select_dtypes(include=[np.number])
@@ -78,8 +75,8 @@ print(train_data.head())
 print("Missing values in train data:\n", train_data.isnull().sum())
 print("Missing values in test data:\n", test_data.isnull().sum())
 
-train_data = train_data.fillna(train_data.mean())
-test_data = test_data.fillna(test_data.mean())
+train_data = fill_missing_values(train_data)
+test_data = fill_missing_values(test_data)
 
 # Normalise the data
 ## ToDo tell user about normalisation and let them choose the method
