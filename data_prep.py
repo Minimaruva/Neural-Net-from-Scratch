@@ -2,6 +2,11 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
+def load_data_csv(data_path):
+    with open(data_path, "r") as data_file:
+        data = pd.read_csv(data_file)
+    return data
+
 def load_data_train_test(train_data_path, test_data_path):
     with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
         train_data = pd.read_csv(train_file)
@@ -12,6 +17,19 @@ def load_data_train_test(train_data_path, test_data_path):
     return train_data, test_data, col_names
 
 
+def split_train_test(df, test_ratio=0.2, seed=42):
+    if test_ratio <= 0 or test_ratio >= 1:
+        raise ValueError("test_ratio must be between 0 and 1 (exclusive).")
+
+    shuffled = df.sample(frac=1, random_state=seed).reset_index(drop=True)
+    test_size = int(len(shuffled) * test_ratio)
+
+    test_df = shuffled.iloc[:test_size].reset_index(drop=True)
+    train_df = shuffled.iloc[test_size:].reset_index(drop=True)
+
+    return train_df, test_df
+
+
 def encode_non_numeric(df):
     non_numeric_columns = df.select_dtypes(exclude=[np.number]).columns.tolist()
     for col in non_numeric_columns:
@@ -19,7 +37,18 @@ def encode_non_numeric(df):
     return df
 
 def fill_missing_values(df):
-    return df.fillna(df.median())
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    if len(numeric_cols) == 0:
+        return df
+    numeric_fill = df[numeric_cols].median()
+    df[numeric_cols] = df[numeric_cols].fillna(numeric_fill)
+    return df
+
+
+def drop_columns(df, columns):
+    if not columns:
+        return df
+    return df.drop(columns=columns, errors="ignore")
 
 def normalize_data_z_score(df, labels=None):
     if labels is not None:
