@@ -2,16 +2,17 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
+
 def load_data_csv(data_path):
     with open(data_path, "r") as data_file:
         data = pd.read_csv(data_file)
     return data
 
+
 def load_data_train_test(train_data_path, test_data_path):
-    with open (train_data_path, 'r') as train_file, open(test_data_path, 'r') as test_file:
+    with open(train_data_path, "r") as train_file, open(test_data_path, "r") as test_file:
         train_data = pd.read_csv(train_file)
         test_data = pd.read_csv(test_file)
-
 
     col_names = train_data.columns.values
     return train_data, test_data, col_names
@@ -36,6 +37,7 @@ def encode_non_numeric(df):
         df[col] = LabelEncoder().fit_transform(df[col].astype(str))
     return df
 
+
 def fill_missing_values(df):
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     if len(numeric_cols) == 0:
@@ -50,10 +52,11 @@ def drop_columns(df, columns):
         return df
     return df.drop(columns=columns, errors="ignore")
 
+
 def normalize_data_z_score(df, labels=None):
     if labels is not None:
         features = df.drop(columns=labels)
-        labels_df = df[labels] 
+        labels_df = df[labels]
 
         mean = features.mean()
         std = features.std()
@@ -64,34 +67,17 @@ def normalize_data_z_score(df, labels=None):
         mean = df.mean()
         std = df.std()
         df = (df - mean) / std
-    
+
     return df, mean, std
 
 
 def split_reshape_data(df, labels):
-    samples = df.shape[0]  # number of samples
+    samples = df.shape[0]
 
     x_data = df.drop(columns=labels).to_numpy()
     y_data = df[labels].to_numpy()
 
-    x_data = x_data.T 
+    x_data = x_data.T
     y_data = y_data.reshape(len(labels), samples)
 
     return x_data, y_data
-
-
-# Display the columns in the training data
-
-
-# Immediately drop non-numeric columns
-## TODO: show user non-numeric columns and ask if they want to drop them or encode them
-
-# Fill missing values with the mean of each column
-## ToDo tell user about missing values and let them choose how to handle them
-
-
-# Normalise the data
-## ToDo tell user about normalisation and let them choose the method
-### https://developers.google.com/machine-learning/crash-course/numerical-data/normalization
-
-

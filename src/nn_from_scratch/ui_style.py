@@ -28,7 +28,9 @@ def apply_theme(root):
     style.configure("Panel.TFrame", background=PALETTE["panel"])
     style.configure("TLabel", background=PALETTE["panel"], foreground=PALETTE["text"], font=FONTS["body"])
     style.configure("Title.TLabel", background=PALETTE["bg"], foreground=PALETTE["text"], font=FONTS["title"])
-    style.configure("Subtitle.TLabel", background=PALETTE["panel"], foreground=PALETTE["text"], font=FONTS["subtitle"])
+    style.configure(
+        "Subtitle.TLabel", background=PALETTE["panel"], foreground=PALETTE["text"], font=FONTS["subtitle"]
+    )
     style.configure("TButton", background=PALETTE["accent"], foreground=PALETTE["muted"])
 
     style.map(

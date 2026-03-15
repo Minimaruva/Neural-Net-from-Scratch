@@ -1,13 +1,13 @@
 import numpy as np
 import pandas as pd
 
-from data_prep import (
+from nn_from_scratch.data_prep import (
     encode_non_numeric,
     fill_missing_values,
     normalize_data_z_score,
     split_reshape_data,
 )
-from Network_tools import train_network, predict
+from nn_from_scratch.network import train_network, predict
 
 
 def test_data_prep():

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def init_network(layer_dims, alpha=1, beta=1, **legacy_kwargs):
     weights = []
     biases = []
@@ -26,8 +27,9 @@ def init_network(layer_dims, alpha=1, beta=1, **legacy_kwargs):
 
     return weights, biases
 
+
 def sigmoid(arr):
-    return 1 / (1+np.exp(-1*arr))
+    return 1 / (1 + np.exp(-1 * arr))
 
 
 def sigmoid_derivative(activation):
@@ -35,17 +37,17 @@ def sigmoid_derivative(activation):
 
 
 def feed_forward(input_layer, weights, biases, **legacy_kwargs):
-        cache = [input_layer]
+    cache = [input_layer]
 
-        for layer_index in range(len(weights)):
-                prev_layer = cache[layer_index]
-                W = weights[layer_index]
-                b = biases[layer_index]
-                Z = W @ prev_layer + b
-                A = sigmoid(Z)
-                cache.append(A)
+    for layer_index in range(len(weights)):
+        prev_layer = cache[layer_index]
+        W = weights[layer_index]
+        b = biases[layer_index]
+        Z = W @ prev_layer + b
+        A = sigmoid(Z)
+        cache.append(A)
 
-        return cache
+    return cache
 
 
 def predict(input_layer, weights, biases):
@@ -100,5 +102,3 @@ def train_network(
             dA = weights[layer_index].T @ dZ
 
     return weights, biases, loss_history
-
-

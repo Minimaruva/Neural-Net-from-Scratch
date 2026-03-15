@@ -1,12 +1,22 @@
+import sys
+from pathlib import Path
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 import numpy as np
 
-from ui_style import PALETTE, FONTS, apply_theme, create_panel, style_widget
 
-from data_prep import (
+# Ensure src/ is on sys.path when running directly (editable install also works)
+ROOT = Path(__file__).resolve().parent
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+	sys.path.insert(0, str(SRC))
+
+
+from nn_from_scratch.ui_style import PALETTE, FONTS, apply_theme, create_panel, style_widget
+
+from nn_from_scratch.data_prep import (
 	encode_non_numeric,
 	fill_missing_values,
 	drop_columns,
@@ -16,7 +26,7 @@ from data_prep import (
 	split_train_test,
 	split_reshape_data,
 )
-from Network_tools import train_network, predict, compute_mse
+from nn_from_scratch.network import train_network, predict, compute_mse
 
 
 class DataPrepGUI:
@@ -943,8 +953,11 @@ class DataPrepGUI:
 		self.sample_text.delete("1.0", "end")
 		self.sample_text.insert("end", "\n".join(lines))
 
-
-if __name__ == "__main__":
+def main():
 	root = tk.Tk()
 	app = DataPrepGUI(root)
 	root.mainloop()
+
+
+if __name__ == "__main__":
+	main()

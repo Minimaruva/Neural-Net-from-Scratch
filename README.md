@@ -1,36 +1,56 @@
-# Overview
-A simple Neural network with backpropagation from scratch in python using common packages like numpy and pandas
+## Neural Network From Scratch with GUI
 
-The neural network is generalised for any number of layers and inputs
+Build, inspect, and train a tiny fully-connected neural network (Numpy only) with a Tkinter GUI for quick data prep and visualization.
 
-Titanic dataset from https://www.kaggle.com/competitions/titanic/data
-Idea inspired from this tutorial https://medium.com/@waadlingaadil/learn-to-build-a-neural-network-from-scratch-yes-really-cac4ca457efc
+### Demo
+- Data prep UI: ![GUI overview](assets/data_prepui.png)
+- Graph visualiser: ![Graph visualiser](assets/graphui.png)
+- Training animation: ![Training animation](assets/training.gif)
 
-The project contains the notebooks with neural network as well as demo of
-neural network performance on titanic dataset
+### Highlights
+- GUI for CSV ingest, preprocessing (encode/fill/normalize), architecture preview, and live training animation.
+- From scratch Numpy implementation of feedforward/backprop with customizable layer dimensions.
+- Titanic demo notebooks for experimentation.
 
-The basic data preparation functions are implemented too to give a way for general user
-to train neural network on reasobaly usable datasets
+### Quickstart
+1) Install deps (Python 3.10+):
+  - `python -m pip install -r requirements.txt`
+  - For editable dev (src layout): `python -m pip install -e .[dev]`
+2) Launch the GUI: `python app.py`
+  - Load train/test CSVs (or a single file with split), pick label, tweak preprocessing, then train.
+  - Sample data lives in [data/titanic](data/titanic) (Kaggle Titanic CSVs).
+3) Run smoke tests: `python -m pytest tests/test_smoke.py`
 
-The gui is planned to be done online
+### Project Structure
+```
+.
+├─ app.py                 # GUI entrypoint
+├─ src/
+│  └─ nn_from_scratch/    # Library code
+│     ├─ data_prep.py     # CSV load/encode/fill/normalize helpers
+│     ├─ network.py       # Init/feedforward/backprop/predict
+│     └─ ui_style.py      # Shared palette/TTK styling
+├─ tests/
+│  └─ test_smoke.py       # Sanity checks for prep + training
+├─ notebooks/             # NN.ipynb, NN_old.ipynb, NN copy.ipynb, Titanic_demo.ipynb
+├─ data/
+│  └─ titanic/            # Kaggle Titanic CSVs and notes PDF
+├─ docs/                  # Feature specs and repo overview
+├─ requirements.txt
+└─ pyproject.toml
+```
 
-# Challenges
-...
+### Using the Library (no GUI)
+```python
+import numpy as np
+from nn_from_scratch.data_prep import encode_non_numeric, fill_missing_values, normalize_data_z_score, split_reshape_data
+from nn_from_scratch.network import train_network, predict
 
-# Demo and results
+# X: features as (features, samples), Y: labels as (outputs, samples)
+weights, biases, loss_history = train_network(X, Y, layer_dims=[X.shape[0], 8, Y.shape[0]], epochs=500, learning_rate=0.05)
+preds = predict(X, weights, biases)
+```
 
-# How to use
-## GUI data prep
-- Run `python gui.py` to open the data loader UI.
-- Pick training and testing CSV files, or switch to single-file split mode.
-- Choose the label column and preprocessing options.
-- Optionally select columns to drop before preprocessing.
-- Click "Process Data" to store `x_data` and `y_data` in memory.
-
-## Network initialization
-- Use the generalized API: `init_network([input_dim, hidden1, hidden2, output_dim])`.
-- `feed_forward(input_layer, weights, biases)` now iterates over all layers automatically.
-
-## Notebooks
-- The existing notebooks are kept intact as test/reference networks.
-
+### Notes / To-Do
+- Consider packaging for pip (`pyproject.toml`) if you want to distribute the library.
+- Add more datasets or preprocessing recipes as needed.
