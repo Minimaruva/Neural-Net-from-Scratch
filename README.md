@@ -51,6 +51,3 @@ weights, biases, loss_history = train_network(X, Y, layer_dims=[X.shape[0], 8, Y
 preds = predict(X, weights, biases)
 ```
 
-### Notes / To-Do
-- Consider packaging for pip (`pyproject.toml`) if you want to distribute the library.
-- Add more datasets or preprocessing recipes as needed.
